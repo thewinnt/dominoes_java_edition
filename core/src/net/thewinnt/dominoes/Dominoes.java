@@ -13,7 +13,7 @@ import net.thewinnt.dominoes.screen.*;
 import net.thewinnt.dominoes.ui.*;
 
 public class Dominoes extends Game {
-	private MainMenuScreen mainMenuScreen;
+	public MainMenuScreen mainMenuScreen; // this is public because of the shared splash code
 	private GamemodeSelectScreen gamemodeSelectScreen;
 	private LocalGameScreen localGameScreen;
 
@@ -26,10 +26,13 @@ public class Dominoes extends Game {
 	public BitmapFont font_button;
 	public BitmapFont font_disabled;
 	public BitmapFont font_splash;
+	public BitmapFont font_select_gm;
 
 	public static final short MAIN_MENU = 0;
 	public static final short GAMEMODE_SELECT = 1;
 	public static final short LOCAL_GAME = 2;
+
+	public static final Random RANDOM = new Random(); // the global instance of Random
 
 	private Color[] theme_light = {
 		Utils.rgbColor(0, 0, 0),
@@ -130,7 +133,7 @@ public class Dominoes extends Game {
 
 	public String font_chars = "";
 
-	public final String splash = splashes[new Random().nextInt(splashes.length)];
+	public final String splash = splashes[RANDOM.nextInt(splashes.length)];
 
 	public void changeScreen(int new_screen) {
 		switch (new_screen) {
@@ -166,6 +169,9 @@ public class Dominoes extends Game {
 
 		parameter.size = 30;
 		font_edition = gen_bahn.generateFont(parameter);
+
+		parameter.size = 70;
+		font_select_gm = gen_dhm.generateFont(parameter);
 
 		parameter.size = 60;
 		font_button = gen_dhm.generateFont(parameter);

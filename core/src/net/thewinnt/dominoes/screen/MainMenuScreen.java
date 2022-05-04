@@ -52,90 +52,12 @@ public class MainMenuScreen implements Screen {
 
     public MainMenuScreen(final Dominoes dmn) {
         game = dmn;
-        stage = new Stage(new ScreenViewport(), new PolygonSpriteBatch());
-        Gdx.input.setInputProcessor(stage);
-
-        // prepare UI elements
-        Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.drawPixel(0, 0);
-        texture = new Texture(pixmap); //remember to dispose of later
-        pixmap.dispose();
-        TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
-        drawer = new ShapeDrawer(stage.getBatch(), region);
-        RectangleDrawable normal = new RectangleDrawable(drawer);
-        RectangleDrawable pressed = new RectangleDrawable(drawer);
-        RectangleDrawable over = new RectangleDrawable(drawer);
-        RectangleDrawable disabled = new RectangleDrawable(drawer);
-        normal.out_color = game.theme.colors[0];
-        normal.in_color = game.theme.colors[14];
-        pressed.out_color = game.theme.colors[0];
-        pressed.in_color = game.theme.colors[13];
-        over.out_color = game.theme.colors[0];
-        over.in_color = game.theme.colors[12];
-        disabled.out_color = game.theme.colors[16];
-        disabled.in_color = game.theme.colors[13];
-        TextButtonStyle style_button = new TextButtonStyle(normal, pressed, normal, game.font_button);
-        TextButtonStyle style_inactive = new TextButtonStyle(disabled, disabled, disabled, game.font_disabled);
-        LabelStyle style_title = new LabelStyle(game.font_title, game.theme.colors[15]);
-        LabelStyle style_edition = new LabelStyle(game.font_edition, game.theme.colors[15]);
-        style_button.over = over;
-        style_button.checkedOver = over;
-
-        old_matrix = stage.getBatch().getTransformMatrix().cpy();
-
-        // create UI elements
-        btn_play = new TextButton("Новая игра", style_inactive);
-        btn_settings = new TextButton("Настройки", style_inactive);
-        btn_exit = new TextButton("Выход", style_button);
-        btn_load_game = new TextButton("Загрузить игру", style_inactive);
-
-        title = new Label("Домино", style_title);
-        edition = new Label("Java Edition", style_edition);
-
-        // set positions
-        title.setPosition(640, 720, Align.top);
-        edition.setPosition(640, 510, Align.top);
-
-        btn_play.setSize(320, 55);
-        btn_play.setPosition(480, 365, Align.topLeft);
-        btn_load_game.setSize(320, 55);
-        btn_load_game.setPosition(480, 300, Align.topLeft);
-        btn_load_game.setDisabled(true);
-        btn_settings.setSize(320, 55);
-        btn_settings.setPosition(480, 235, Align.topLeft);
-        btn_exit.setSize(320, 55);
-        btn_exit.setPosition(480, 170, Align.topLeft);
-
-        // event listeners
-        // btn_play.addListener(new ChangeListener() {
-        //     public void changed(ChangeEvent event, Actor actor) {
-        //         game.changeScreen(Dominoes.GAMEMODE_SELECT);
-        //     }
-        // });
-        btn_exit.addListener(new ChangeListener() {
-            public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Thanks for playing!");
-                System.exit(0);
-            }
-        });
-
-        // add them to the title_text
-        stage.addActor(title);
-        stage.addActor(edition);
-        stage.addActor(btn_play);
-        stage.addActor(btn_load_game);
-        stage.addActor(btn_settings);
-        stage.addActor(btn_exit);
     }
 
-    @Override
-    public void render(float delta) {
-        ScreenUtils.clear(0.01172f, 0.8196f, 1, 1);
-        float dt = delta;
+    public void render_splash(float dt) {
         splash_time += dt * 12;
         frame_delay += dt * 12;
-        float scale = 1 + (float) Math.sin(splash_time) / 10;
+        float scale = 1 + (float) Math.sin(splash_time) / 30;
         // prepare splash
         if (game.splash == "\uF400") {
             final_splash = "This splash can't be translated yet";
@@ -156,6 +78,7 @@ public class MainMenuScreen implements Screen {
         temp.begin();
         GlyphLayout layout = game.font_splash.draw(temp, final_splash, 0, 0);
         temp.end();
+        temp.dispose();
         mx4_font = new Matrix4();
         mx4_font.trn(900, 510, 0);
         mx4_font.scl(scale);
@@ -167,45 +90,111 @@ public class MainMenuScreen implements Screen {
         game.font_splash.draw(batch, final_splash, -layout.width / 2, layout.height / 2);
         batch.end();
         batch.setTransformMatrix(old_matrix);
+    }
 
-
+    @Override
+    public void render(float dt) {
+        ScreenUtils.clear(game.theme.colors[12]);
+        render_splash(dt);
         stage.act(dt);
         stage.draw();
     }
 
     @Override
     public void show() {
-        // TODO Auto-generated method stub
-        
+        stage = new Stage(new ScreenViewport(), new PolygonSpriteBatch());
+        Gdx.input.setInputProcessor(stage);
+
+        // prepare UI elements
+        Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.drawPixel(0, 0);
+        texture = new Texture(pixmap);
+        pixmap.dispose();
+        TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
+        drawer = new ShapeDrawer(stage.getBatch(), region);
+        RectangleDrawable normal = new RectangleDrawable(drawer);
+        RectangleDrawable pressed = new RectangleDrawable(drawer);
+        RectangleDrawable over = new RectangleDrawable(drawer);
+        RectangleDrawable disabled = new RectangleDrawable(drawer);
+        normal.setColors(game.theme.colors[14], game.theme.colors[0]);
+        pressed.setColors(game.theme.colors[13], game.theme.colors[0]);
+        over.setColors(game.theme.colors[12], game.theme.colors[0]);
+        disabled.setColors(game.theme.colors[13], game.theme.colors[16]);
+        TextButtonStyle style_button = new TextButtonStyle(normal, pressed, normal, game.font_button);
+        TextButtonStyle style_inactive = new TextButtonStyle(disabled, disabled, disabled, game.font_disabled);
+        LabelStyle style_title = new LabelStyle(game.font_title, game.theme.colors[15]);
+        LabelStyle style_edition = new LabelStyle(game.font_edition, game.theme.colors[15]);
+        style_button.over = over;
+        style_button.checkedOver = over;
+
+        old_matrix = stage.getBatch().getTransformMatrix().cpy();
+
+        // create UI elements
+        btn_play = new TextButton("Новая игра", style_button);
+        btn_settings = new TextButton("Настройки", style_inactive);
+        btn_exit = new TextButton("Выход", style_button);
+        btn_load_game = new TextButton("Загрузить игру", style_inactive);
+
+        title = new Label("Домино", style_title);
+        edition = new Label("Java Edition", style_edition);
+
+        // set positions
+        title.setPosition(640, 720, Align.top);
+        edition.setPosition(640, 510, Align.top);
+
+        btn_play.setSize(320, 55);
+        btn_load_game.setSize(320, 55);
+        btn_settings.setSize(320, 55);
+        btn_exit.setSize(320, 55);
+
+        btn_load_game.setDisabled(true);
+        btn_settings.setDisabled(true);
+
+        btn_play.setPosition(480, 365, Align.topLeft);
+        btn_load_game.setPosition(480, 300, Align.topLeft);
+        btn_settings.setPosition(480, 235, Align.topLeft);
+        btn_exit.setPosition(480, 170, Align.topLeft);
+
+        // event listeners
+        btn_play.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                game.changeScreen(Dominoes.GAMEMODE_SELECT);
+            }
+        });
+        btn_exit.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Thanks for playing!");
+                System.exit(0);
+            }
+        });
+
+        // add them to the stage
+        stage.addActor(title);
+        stage.addActor(edition);
+        stage.addActor(btn_play);
+        stage.addActor(btn_load_game);
+        stage.addActor(btn_settings);
+        stage.addActor(btn_exit);
     }
 
     @Override
-    public void resize(int width, int height) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void resize(int width, int height) {} // might implement later
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-        
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-        
-    }
+    public void resume() {}
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
-        
+        dispose();
     }
 
     @Override
     public void dispose() {
         texture.dispose();
-        
+        stage.dispose();
     }
 }

@@ -22,5 +22,15 @@ public class RectangleDrawable extends ShapeDrawerDrawable {
                               width - line_width, height - line_width, in_color);
         shapeDrawer.rectangle(x, y, width, height, out_color, line_width);
     }
+
+    /**
+     * Sets the colors of the drawable
+     * @param in The inner color
+     * @param out The outline color
+     */
+    public void setColors(Color in, Color out) {
+        in_color = in;
+        out_color = out;
+    }
     
 }
