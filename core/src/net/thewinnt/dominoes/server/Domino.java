@@ -1,6 +1,6 @@
 package net.thewinnt.dominoes.server;
 
-public class Domino {
+public class Domino implements Cloneable {
     public final int a;
     public final int b;
     public Placement placement;
@@ -39,8 +39,24 @@ public class Domino {
      * @param other The Domino to compare against
      * @return True if the two dominoes are equal, false if they are not
      */
-    public boolean equals(Domino other) {
-        return (this.a == other.a && this.b == other.b && this.placement == other.placement);
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        } else if (other instanceof Domino) {
+            Domino o = (Domino) other;
+            return (this.a == o.a && this.b == o.b && this.placement == o.placement);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the type of this Domino
+     * @return A new {@link DominoType} representing this domino
+     */
+    public DominoType getType() {
+        return new DominoType(a, b);
     }
 
     /**
@@ -94,5 +110,14 @@ public class Domino {
         NORMAL,
         REVERSED,
         DOUBLE;
+    }
+
+    @Override
+    public Domino clone() {
+        return new Domino(a, b, placement);
+    }
+
+    public boolean less_than(Domino other) {
+        return a + b < other.a + other.b;
     }
 }

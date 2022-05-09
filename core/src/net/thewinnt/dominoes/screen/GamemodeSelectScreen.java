@@ -2,6 +2,8 @@ package net.thewinnt.dominoes.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,7 +49,6 @@ public class GamemodeSelectScreen implements Screen {
     public void show() {
         stage = new Stage(new ScreenViewport(), new PolygonSpriteBatch());
         Gdx.input.setInputProcessor(stage);
-
         // prepare UI elements
         Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -94,7 +95,6 @@ public class GamemodeSelectScreen implements Screen {
         btn_bot_battle.setSize(300, 55);
         btn_online.setSize(300, 55);
 
-        btn_local.setDisabled(true);
         btn_single.setDisabled(true);
         btn_bot_battle.setDisabled(true);
         btn_online.setDisabled(true);
@@ -108,6 +108,12 @@ public class GamemodeSelectScreen implements Screen {
         btn_back.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 game.changeScreen(Dominoes.MAIN_MENU);
+            }
+        });
+
+        btn_local.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                game.changeScreen(Dominoes.LOCAL_GAME);
             }
         });
 
@@ -126,6 +132,10 @@ public class GamemodeSelectScreen implements Screen {
     public void render(float dt) {
         ScreenUtils.clear(game.theme.colors[12]);
         game.mainMenuScreen.render_splash(dt);
+        if (Gdx.input.isKeyJustPressed(Keys.ESCAPE) || Gdx.input.isButtonJustPressed(Buttons.BACK)) {
+            game.changeScreen(Dominoes.MAIN_MENU);
+            return;
+        }
         stage.act(dt);
         stage.draw();
         

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import net.thewinnt.dominoes.screen.*;
 import net.thewinnt.dominoes.ui.*;
+import net.thewinnt.dominoes.util.ColorUtils;
 
 public class Dominoes extends Game {
 	public MainMenuScreen mainMenuScreen; // this is public because of the shared splash code
@@ -20,6 +21,7 @@ public class Dominoes extends Game {
 	private FreeTypeFontGenerator gen_dhm;
 	private FreeTypeFontGenerator gen_bahn;
 	private FreeTypeFontGenerator gen_comic;
+	private FreeTypeFontGenerator gen_dhmbold;
 
 	public BitmapFont font_title;
 	public BitmapFont font_edition;
@@ -27,6 +29,10 @@ public class Dominoes extends Game {
 	public BitmapFont font_disabled;
 	public BitmapFont font_splash;
 	public BitmapFont font_select_gm;
+	public BitmapFont font_version;
+	public BitmapFont font_fps;
+	public BitmapFont font_domino;
+	public BitmapFont font_board_debug;
 
 	public static final short MAIN_MENU = 0;
 	public static final short GAMEMODE_SELECT = 1;
@@ -34,41 +40,45 @@ public class Dominoes extends Game {
 
 	public static final Random RANDOM = new Random(); // the global instance of Random
 
-	private Color[] theme_light = {
-		Utils.rgbColor(0, 0, 0),
-		Utils.rgbColor(0, 0, 0),
-		Utils.rgbColor(242, 242, 242),
-		Utils.rgbColor(224, 0, 0),
-		Utils.rgbColor(255, 96, 0),
-		Utils.rgbColor(255, 192, 0),
-		Utils.rgbColor(0, 224, 0),
-		Utils.rgbColor(0, 192, 255),
-		Utils.rgbColor(0, 0, 224),
-		Utils.rgbColor(128, 0, 255),
-		Utils.rgbColor(255, 0, 255),
-		Utils.rgbColor(0, 0, 0),
-		Utils.rgbColor(3, 209, 255),
-		Utils.rgbColor(0, 156, 191),
-		Utils.rgbColor(1, 175, 216),
-		Utils.rgbColor(0, 0, 0),
-		Utils.rgbColor(45, 45, 45),
-		Utils.rgbColor(240, 255, 0),
-		Utils.rgbColor(0, 200, 0),
-		Utils.rgbColor(50, 224, 225),
-		Utils.rgbColor(0, 0, 255, 192),
-		Utils.rgbColor(112, 0, 0),
-		Utils.rgbColor(128, 48, 0),
-		Utils.rgbColor(128, 96, 0),
-		Utils.rgbColor(0, 112, 0),
-		Utils.rgbColor(0, 96, 128),
-		Utils.rgbColor(0, 0, 112),
-		Utils.rgbColor(64, 0, 128),
-		Utils.rgbColor(128, 0, 128),
-		Utils.rgbColor(0, 0, 0)
+	public static final String GAME_VERSION = "v. Alpha 1.0 dev build";
+
+	private Color[] light_colors = {
+		ColorUtils.rgbColor(0, 0, 0),
+		ColorUtils.rgbColor(0, 0, 0),
+		ColorUtils.rgbColor(242, 242, 242),
+		ColorUtils.rgbColor(224, 0, 0),
+		ColorUtils.rgbColor(255, 96, 0),
+		ColorUtils.rgbColor(255, 192, 0),
+		ColorUtils.rgbColor(0, 224, 0),
+		ColorUtils.rgbColor(0, 192, 255),
+		ColorUtils.rgbColor(0, 0, 224),
+		ColorUtils.rgbColor(128, 0, 255),
+		ColorUtils.rgbColor(255, 0, 255),
+		ColorUtils.rgbColor(0, 0, 0),
+		ColorUtils.rgbColor(3, 209, 255),
+		ColorUtils.rgbColor(0, 156, 191),
+		ColorUtils.rgbColor(1, 175, 216),
+		ColorUtils.rgbColor(0, 0, 0),
+		ColorUtils.rgbColor(45, 45, 45),
+		ColorUtils.rgbColor(240, 255, 0),
+		ColorUtils.rgbColor(0, 200, 0),
+		ColorUtils.rgbColor(200, 0, 0),
+		ColorUtils.rgbColor(50, 224, 225),
+		ColorUtils.rgbColor(0, 0, 255, 192),
+		ColorUtils.rgbColor(112, 0, 0),
+		ColorUtils.rgbColor(128, 48, 0),
+		ColorUtils.rgbColor(128, 96, 0),
+		ColorUtils.rgbColor(0, 112, 0),
+		ColorUtils.rgbColor(0, 96, 128),
+		ColorUtils.rgbColor(0, 0, 112),
+		ColorUtils.rgbColor(64, 0, 128),
+		ColorUtils.rgbColor(128, 0, 128),
+		ColorUtils.rgbColor(0, 0, 0)
 	};
 
-	private Theme light_theme = new Theme(theme_light, "TheWinNT", "Light", "The default light theme", 2);
+	private Theme light_theme = new Theme(light_colors, "TheWinNT", "Light", "The default light theme", 2);
 	public Theme theme = light_theme;
+
 	public String[] splashes = {
 		"Java recreation!",
 		"Less lag!",
@@ -159,6 +169,7 @@ public class Dominoes extends Game {
 		gen_dhm = new FreeTypeFontGenerator(Gdx.files.internal("denhome.otf"));
 		gen_bahn = new FreeTypeFontGenerator(Gdx.files.internal("bahnschrift.ttf"));
 		gen_comic = new FreeTypeFontGenerator(Gdx.files.internal("comic.ttf"));
+		gen_dhmbold = new FreeTypeFontGenerator(Gdx.files.internal("dhmbold.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		for (int i = 0x20; i < 0x7B; i++) font_chars += (char) i;
 		for (int i = 0x401; i < 0x452; i++) font_chars += (char) i;
@@ -169,6 +180,11 @@ public class Dominoes extends Game {
 
 		parameter.size = 30;
 		font_edition = gen_bahn.generateFont(parameter);
+		font_fps = gen_dhm.generateFont(parameter);
+		font_board_debug = gen_dhmbold.generateFont(parameter);
+
+		parameter.size = 40;
+		font_version = gen_dhm.generateFont(parameter);
 
 		parameter.size = 70;
 		font_select_gm = gen_dhm.generateFont(parameter);
@@ -182,6 +198,10 @@ public class Dominoes extends Game {
 		parameter.size = 40;
 		parameter.color = theme.colors[17];
 		font_splash = gen_comic.generateFont(parameter);
+
+		parameter.color = new Color(1, 1, 1, 1);
+		parameter.size = 240;
+		font_domino = gen_bahn.generateFont(parameter);
 
 		// set the screen
 		changeScreen(0);

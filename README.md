@@ -1,6 +1,6 @@
 # dominoes_java_edition
 A Dominoes game written in Java. I also have made a [Python](https://github.com/thewinnt/dominoes_python_edition) version, as well as a [Scratch](https://scratch.mit.edu/projects/288062011) version that started it all.
-**You need at least Java 8 to play the game (this will probably change in the future!).**
+**You need at least Java 16 to play the game.**
 
 ## Gameplay
 Soon™. In the meantime, you can enjoy the main menu, which is absolutely identical to the Python version's one, except only the exit button works and there is no tutorial button. And there's no dark theme yet, sorry :(

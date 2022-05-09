@@ -17,7 +17,7 @@ public class DominoOperator {
     private Set<Domino> free_dominoes;
     private Domino center = null;
 
-    private int set_type;
+    public final int set_type;
 
     /**
      * A class that operates the dominoes without creating duplicates
@@ -67,6 +67,10 @@ public class DominoOperator {
     /** Returns the Side at the specified index */
     public Side getSide(int index) {
         return sides[index];
+    }
+
+    public Domino getCenter() {
+        return center;
     }
 
     public boolean isAvailable(DominoType domino) {

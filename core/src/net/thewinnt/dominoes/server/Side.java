@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.thewinnt.dominoes.server.Domino.Placement;
 
-public class Side implements DominoHolder {
+public class Side implements DominoHolder, Cloneable {
     ArrayList<Domino> contents = new ArrayList<Domino>();
     boolean is_blocked = false;
     int start_from_end = -1;
@@ -35,7 +35,7 @@ public class Side implements DominoHolder {
             return false;
         } else {
             Placement compatibility;
-            if (start_from_end != -1) {
+            if (start_from_end == -1) {
                 compatibility = contents.get(contents.size() - 1).compatibilityType(domino);
             } else {
                 compatibility = new Domino(start_from_end, start_from_end).compatibilityType(domino);
@@ -53,6 +53,9 @@ public class Side implements DominoHolder {
 
     public void blindAdd(Domino domino) {
         contents.add(domino);
+        if (domino.placement == null) {
+            domino.placement = Placement.NORMAL;
+        }
     }
 
     public Placement compatibilityType(Domino domino) {
@@ -103,5 +106,14 @@ public class Side implements DominoHolder {
     @Override
     public void clear() {
         contents.clear();
+    }
+
+    @Override
+    public Side clone() {
+        ArrayList<Domino> new_contents = new ArrayList<Domino>(contents.size());
+        for (int i = 0; i < contents.size(); i++) {
+            new_contents.set(i, contents.get(i).clone());
+        }
+        return new Side(new_contents, start_from_end, is_blocked);
     }
 }

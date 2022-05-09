@@ -39,15 +39,19 @@ public class MainMenuScreen implements Screen {
     private TextButton btn_settings;
     private TextButton btn_exit;
     private TextButton btn_load_game;
+    private TextButton btn_tutorial;
 
     private Label title;
     private Label edition;
+    private Label version;
+    private Label fps;
 
     private Matrix4 old_matrix;
     private Matrix4 mx4_font;
 
     private float splash_time;
     private float frame_delay;
+    private float fps_timer;
     private String final_splash = "";
 
     public MainMenuScreen(final Dominoes dmn) {
@@ -96,6 +100,12 @@ public class MainMenuScreen implements Screen {
     public void render(float dt) {
         ScreenUtils.clear(game.theme.colors[12]);
         render_splash(dt);
+        fps_timer += dt;
+        if (fps_timer > 0.5f) {
+            fps_timer = 0;
+            fps.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+            fps.setPosition(1272, 4, Align.bottomRight);
+        }
         stage.act(dt);
         stage.draw();
     }
@@ -125,6 +135,8 @@ public class MainMenuScreen implements Screen {
         TextButtonStyle style_inactive = new TextButtonStyle(disabled, disabled, disabled, game.font_disabled);
         LabelStyle style_title = new LabelStyle(game.font_title, game.theme.colors[15]);
         LabelStyle style_edition = new LabelStyle(game.font_edition, game.theme.colors[15]);
+        LabelStyle style_version = new LabelStyle(game.font_version, game.theme.colors[15]);
+        LabelStyle style_fps = new LabelStyle(game.font_fps, game.theme.colors[15]);
         style_button.over = over;
         style_button.checkedOver = over;
 
@@ -135,26 +147,34 @@ public class MainMenuScreen implements Screen {
         btn_settings = new TextButton("Настройки", style_inactive);
         btn_exit = new TextButton("Выход", style_button);
         btn_load_game = new TextButton("Загрузить игру", style_inactive);
+        btn_tutorial = new TextButton("Как играть", style_inactive);
 
         title = new Label("Домино", style_title);
         edition = new Label("Java Edition", style_edition);
+        version = new Label(Dominoes.GAME_VERSION, style_version);
+        fps = new Label("FPS: " + Gdx.graphics.getFramesPerSecond(), style_fps);
 
         // set positions
         title.setPosition(640, 720, Align.top);
         edition.setPosition(640, 510, Align.top);
+        version.setPosition(8, 4, Align.bottomLeft);
 
         btn_play.setSize(320, 55);
         btn_load_game.setSize(320, 55);
         btn_settings.setSize(320, 55);
-        btn_exit.setSize(320, 55);
+        btn_exit.setSize(155, 55);
+        btn_tutorial.setSize(155, 55);
 
         btn_load_game.setDisabled(true);
         btn_settings.setDisabled(true);
+        btn_tutorial.setDisabled(true);
 
         btn_play.setPosition(480, 365, Align.topLeft);
         btn_load_game.setPosition(480, 300, Align.topLeft);
         btn_settings.setPosition(480, 235, Align.topLeft);
-        btn_exit.setPosition(480, 170, Align.topLeft);
+        btn_exit.setPosition(645, 170, Align.topLeft);
+        btn_tutorial.setPosition(480, 170, Align.topLeft);
+
 
         // event listeners
         btn_play.addListener(new ChangeListener() {
@@ -172,10 +192,13 @@ public class MainMenuScreen implements Screen {
         // add them to the stage
         stage.addActor(title);
         stage.addActor(edition);
+        stage.addActor(version);
+        stage.addActor(fps);
         stage.addActor(btn_play);
         stage.addActor(btn_load_game);
         stage.addActor(btn_settings);
         stage.addActor(btn_exit);
+        stage.addActor(btn_tutorial);
     }
 
     @Override
